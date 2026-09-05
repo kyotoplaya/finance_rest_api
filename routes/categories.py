@@ -49,3 +49,17 @@ def put_patch_category(category_id: int, category: CategoryCreate, db: Session =
     db.refresh(category_to_update)
 
     return category_to_update
+
+
+@router.delete("/categories/{category_id}", response_model=bool)
+def delete_category(category_id: int, db: Session = Depends(get_db)):
+    category_to_delete = db.query(CategoryModel).filter(
+        CategoryModel.id == category_id).first()
+
+    if category_to_delete is None:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    db.delete(category_to_delete)
+    db.commit()
+
+    return True
