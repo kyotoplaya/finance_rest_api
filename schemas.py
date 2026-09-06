@@ -12,6 +12,10 @@ class Category(CategoryBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
     
+class CategoryUpdate(CategoryBase):
+    name: str | None = None
+    category_type: str | None = None
+    
 class TransactionBase(BaseModel):
     amount: float
     transaction_type: str
