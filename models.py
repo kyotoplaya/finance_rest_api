@@ -9,7 +9,7 @@ class Account(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     currency = Column(String)
-    balance = Column(Float)
+    initial_balance = Column(Float)
 
 
 class Category(Base):

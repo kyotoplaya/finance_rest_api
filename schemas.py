@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, computed_field
 from datetime import date
 
 from enums import CategoryType
@@ -44,19 +44,22 @@ class Transaction(TransactionBase):
 class AccountBase(BaseModel):
     name: str
     currency: str
-    balance: float
 
 
 class AccountCreate(AccountBase):
-    pass
+    initial_balance: float
 
 
 class Account(AccountBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
 
+    @computed_field
+    def balance(self) -> float:
+        return 999
+
 
 class AccountUpdate(AccountBase):
     name: str | None = None
     currency: str | None = None
-    balance: float | None = None
+    initial_balance: float | None = None
