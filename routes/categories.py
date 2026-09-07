@@ -5,12 +5,18 @@ from database import get_db
 from models import Category as CategoryModel
 from schemas import CategoryCreate, CategoryUpdate, Category
 
+from enums import CategoryType
+
 
 router = APIRouter()
 
 
 @router.post("/categories", response_model=Category, status_code=201)
 def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+    if category.category_type == CategoryType.ADJUSTMENT:
+        raise HTTPException(
+            status_code=403, detail="You cannot create an adjustment category.")
+
     db_category = CategoryModel(**category.model_dump())
     db.add(db_category)
     db.commit()
@@ -40,6 +46,10 @@ def patch_category(category_id: int, category: CategoryUpdate, db: Session = Dep
     if category_to_update is None:
         raise HTTPException(status_code=404, detail="Category not found")
 
+    if category_to_update.is_system:
+        raise HTTPException(
+            status_code=403, detail="You cannot edit a system category.")
+
     updated_category = category.model_dump()
     for key, value in updated_category.items():
         if value is None:
@@ -60,6 +70,10 @@ def put_category(category_id: int, category: CategoryCreate, db: Session = Depen
     if category_to_update is None:
         raise HTTPException(status_code=404, detail="Category not found")
 
+    if category_to_update.is_system:
+        raise HTTPException(
+            status_code=403, detail="You cannot edit a system category.")
+
     updated_category = category.model_dump()
     for key, value in updated_category.items():
         setattr(category_to_update, key, value)
@@ -77,6 +91,10 @@ def delete_category(category_id: int, db: Session = Depends(get_db)):
 
     if category_to_delete is None:
         raise HTTPException(status_code=404, detail="Category not found")
+
+    if category_to_delete.is_system:
+        raise HTTPException(
+            status_code=403, detail="You cannot delete a system category.")
 
     db.delete(category_to_delete)
     db.commit()

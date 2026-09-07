@@ -41,6 +41,14 @@ class Transaction(TransactionBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class TransactionUpdate(TransactionBase):
+    amount: float | None = None
+    account_id: int | None = None
+    # date: date | None = None  Unable to evaluate type annotation 'date | None'.
+    category_id: int | None = None
+    comment: str | None = None
+
+
 class AccountBase(BaseModel):
     name: str
     currency: str
