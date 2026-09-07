@@ -1,17 +1,30 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Boolean, Enum
 from database import Base
+
+from enums import CategoryType
+
+
+class Account(Base):
+    __tablename__ = "accounts"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    currency = Column(String)
+    balance = Column(Float)
+
 
 class Category(Base):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    category_type = Column(String)
+    category_type = Column(Enum(CategoryType))
+    is_system = Column(Boolean, default=False)
+
 
 class Transaction(Base):
     __tablename__ = "transactions"
     id = Column(Integer, primary_key=True, index=True)
     amount = Column(Float)
-    transaction_type = Column(String)
+    account_id = Column(Integer, ForeignKey("accounts.id"))
     date = Column(Date)
     category_id = Column(Integer, ForeignKey("categories.id"))
     comment = Column(String)
