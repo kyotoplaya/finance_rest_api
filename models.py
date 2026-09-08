@@ -24,7 +24,9 @@ class Transaction(Base):
     __tablename__ = "transactions"
     id = Column(Integer, primary_key=True, index=True)
     amount = Column(Float)
-    account_id = Column(Integer, ForeignKey("accounts.id"))
+    account_id = Column(Integer, ForeignKey(
+        "accounts.id", ondelete="RESTRICT"))
     date = Column(Date)
-    category_id = Column(Integer, ForeignKey("categories.id"))
+    category_id = Column(Integer, ForeignKey(
+        "categories.id", ondelete="RESTRICT"))
     comment = Column(String)

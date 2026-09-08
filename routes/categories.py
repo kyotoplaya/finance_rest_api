@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from models import Category as CategoryModel
+from models import Transaction as TransactionModel
 from schemas import CategoryCreate, CategoryUpdate, Category
 
 from enums import CategoryType
@@ -95,6 +96,15 @@ def delete_category(category_id: int, db: Session = Depends(get_db)):
     if category_to_delete.is_system:
         raise HTTPException(
             status_code=403, detail="You cannot delete a system category.")
+
+    transaction = db.query(TransactionModel).filter(
+        TransactionModel.category_id == category_to_delete.id).first()
+
+    if transaction is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Cannot delete category with transaction id {transaction.id}."
+        )
 
     db.delete(category_to_delete)
     db.commit()
