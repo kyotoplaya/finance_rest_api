@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, computed_field
-from datetime import date
+import datetime
 
 from enums import CategoryType
 
@@ -27,7 +27,7 @@ class CategoryUpdate(CategoryBase):
 class TransactionBase(BaseModel):
     amount: float
     account_id: int
-    date: date
+    date: datetime.date | None = None
     category_id: int
     comment: str | None = None
 
@@ -61,10 +61,7 @@ class AccountCreate(AccountBase):
 class Account(AccountBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
-
-    @computed_field
-    def balance(self) -> float:
-        return 999
+    balance: float = 0
 
 
 class AccountUpdate(AccountBase):

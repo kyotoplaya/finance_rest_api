@@ -5,6 +5,8 @@ from database import get_db
 from models import Account as AccountModel
 from schemas import AccountCreate, AccountUpdate, Account
 
+from helpers import compute_balance
+
 router = APIRouter()
 
 
@@ -14,20 +16,28 @@ def create_account(account: AccountCreate, db: Session = Depends(get_db)):
     db.add(db_account)
     db.commit()
     db.refresh(db_account)
+    db_account.balance = compute_balance(db, db_account)
     return db_account
 
 
 @router.get("/accounts", response_model=list[Account])
 def get_accounts(db: Session = Depends(get_db)):
-    return db.query(AccountModel).all()
+    accounts = db.query(AccountModel).all()
+    for account in accounts:
+        account.balance = compute_balance(db, account)
+    return accounts
 
 
 @router.get("/accounts/{account_id}", response_model=Account)
 def get_account(account_id: int, db: Session = Depends(get_db)):
     account = db.query(AccountModel).filter(
         AccountModel.id == account_id).first()
+
     if account is None:
         raise HTTPException(status_code=404, detail="Account not found")
+
+    account.balance = compute_balance(db, account)
+
     return account
 
 
@@ -48,6 +58,7 @@ def patch_account(account_id: int, account: AccountUpdate, db: Session = Depends
     db.commit()
     db.refresh(account_to_update)
 
+    account_to_update.balance = compute_balance(db, account_to_update)
     return account_to_update
 
 
@@ -66,6 +77,7 @@ def put_account(account_id: int, account: AccountUpdate, db: Session = Depends(g
     db.commit()
     db.refresh(account_to_update)
 
+    account_to_update.balance = compute_balance(db, account_to_update)
     return account_to_update
 
 
