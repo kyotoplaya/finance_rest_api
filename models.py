@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Boolean, Enum
+from sqlalchemy import Column, Integer, String, Numeric, Date, ForeignKey, Boolean, Enum
 from database import Base
 
 from enums import CategoryType
@@ -9,7 +9,7 @@ class Account(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     currency = Column(String)
-    initial_balance = Column(Float)
+    initial_balance = Column(Numeric(10, 2))
 
 
 class Category(Base):
@@ -23,7 +23,7 @@ class Category(Base):
 class Transaction(Base):
     __tablename__ = "transactions"
     id = Column(Integer, primary_key=True, index=True)
-    amount = Column(Float)
+    amount = Column(Numeric(10, 2))
     account_id = Column(Integer, ForeignKey(
         "accounts.id", ondelete="RESTRICT"))
     date = Column(Date)

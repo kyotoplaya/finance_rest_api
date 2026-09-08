@@ -1,11 +1,12 @@
 from fastapi.exceptions import HTTPException
+from decimal import Decimal
 
 from models import Category as CategoryModel
 from models import Transaction as TransactionModel
 from enums import CategoryType
 
 
-def compute_balance(db, account) -> float:
+def compute_balance(db, account) -> Decimal:
     rows = (
         db.query(CategoryModel.category_type, TransactionModel.amount)
         .join(CategoryModel, TransactionModel.category_id == CategoryModel.id)
@@ -21,10 +22,10 @@ def compute_balance(db, account) -> float:
     return balance
 
 
-def transaction_delta(category_type: CategoryType, amount: float) -> float:
+def transaction_delta(category_type: CategoryType, amount: Decimal) -> Decimal:
     return -amount if category_type == CategoryType.EXPENSE else amount
 
 
-def ensure_balance_not_negative(balance: float, delta: float) -> None:
+def ensure_balance_not_negative(balance: Decimal, delta: Decimal) -> None:
     if balance + delta < 0:
         raise HTTPException(status_code=400, detail="Insufficient funds")

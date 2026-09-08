@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, computed_field
 import datetime
+from decimal import Decimal
 
 from enums import CategoryType
 
@@ -25,7 +26,7 @@ class CategoryUpdate(CategoryBase):
 
 
 class TransactionBase(BaseModel):
-    amount: float
+    amount: Decimal
     account_id: int
     date: datetime.date | None = None
     category_id: int
@@ -42,9 +43,9 @@ class Transaction(TransactionBase):
 
 
 class TransactionUpdate(TransactionBase):
-    amount: float | None = None
+    amount: Decimal | None = None
     account_id: int | None = None
-    # date: date | None = None  Unable to evaluate type annotation 'date | None'.
+    date: datetime.date | None = None
     category_id: int | None = None
     comment: str | None = None
 
@@ -55,16 +56,16 @@ class AccountBase(BaseModel):
 
 
 class AccountCreate(AccountBase):
-    initial_balance: float
+    initial_balance: Decimal
 
 
 class Account(AccountBase):
     id: int
     model_config = ConfigDict(from_attributes=True)
-    balance: float = 0
+    balance: Decimal = Decimal("0")
 
 
 class AccountUpdate(AccountBase):
     name: str | None = None
     currency: str | None = None
-    initial_balance: float | None = None
+    initial_balance: Decimal | None = None
