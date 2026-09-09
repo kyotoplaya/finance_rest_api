@@ -69,3 +69,10 @@ class AccountUpdate(AccountBase):
     name: str | None = None
     currency: str | None = None
     initial_balance: Decimal | None = None
+
+
+class Report(BaseModel):
+    income: Decimal
+    expense: Decimal
+    balance_delta: Decimal
+    transactions_count: int

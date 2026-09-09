@@ -6,7 +6,6 @@ from models import Transaction as TransactionModel
 from models import Category as CategoryModel
 from models import Account as AccountModel
 from schemas import TransactionCreate, TransactionUpdate, Transaction
-from enums import CategoryType
 
 from helpers import compute_balance, ensure_balance_not_negative, transaction_delta
 
