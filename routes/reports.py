@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/reports/summary")
-def get_report(account_id: int, month: str | None = None, db: Session = Depends(get_db)):
+def get_report(account_id: int, month: str | None = None, category_id: int | None = None, db: Session = Depends(get_db)):
     filters = [
         TransactionModel.account_id == account_id      # всегда
     ]
@@ -35,6 +35,9 @@ def get_report(account_id: int, month: str | None = None, db: Session = Depends(
 
         # только если есть месяц
         filters.append(TransactionModel.date < end)
+
+    if category_id is not None:
+        filters.append(TransactionModel.category_id == category_id)
 
     transactions_count = db.query(TransactionModel).filter(*filters).count()
 
@@ -60,12 +63,12 @@ def get_report(account_id: int, month: str | None = None, db: Session = Depends(
         .scalar()
     )
 
-    balance_delta = income - expense
+    net = income - expense
 
     report = Report(
         income=income,
         expense=expense,
-        balance_delta=balance_delta,
+        net=net,
         transactions_count=transactions_count,
     )
 

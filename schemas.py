@@ -74,5 +74,5 @@ class AccountUpdate(AccountBase):
 class Report(BaseModel):
     income: Decimal
     expense: Decimal
-    balance_delta: Decimal
+    net: Decimal
     transactions_count: int

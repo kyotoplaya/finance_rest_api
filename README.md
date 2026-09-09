@@ -87,7 +87,7 @@ Open <http://127.0.0.1:8000/docs> — Swagger UI with every endpoint, request/re
 | PATCH  | `/transactions/{id}`    | Partially update a transaction               |
 | PUT    | `/transactions/{id}`    | Replace a transaction                        |
 | DELETE | `/transactions/{id}`    | Delete a transaction                         |
-| GET    | `/reports/summary`      | Income/expense/count for `?account_id=&month=YYYY-MM` |
+| GET    | `/reports/summary`      | Income/expense/net/count, filtered by `account_id`, `month=YYYY-MM`, `category_id` |
 
 ### Example: monthly report
 
@@ -99,10 +99,12 @@ GET /reports/summary?account_id=1&month=2026-09
 {
   "income": "1500.00",
   "expense": "830.50",
-  "balance_delta": "669.50",
+  "net": "669.50",
   "transactions_count": 12
 }
 ```
+
+`net` = `income - expense` over the selected slice. When filtered to a single expense category, `net` is negative — that is the category's net effect on the account.
 
 ## How balance works
 
